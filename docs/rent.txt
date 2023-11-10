@@ -1,0 +1,25 @@
+rent
+
+coloum for product_table:-
+                            pickup location
+                            drop off location
+                            price per hour
+                            price per day
+                            nesseccery document
+                            currently avalilabel
+                            when available
+                            Fee after expiry of time period
+
+order table :-
+             // order_type : buy_or_rent
+              booking timing:
+              booked from:
+              booked to:
+              booking start time:
+              booking end time:
+              total_amount:
+              gst:
+              cgst:
+              sgst:
+              extra time taken after the deadline:
+              extra charges for wear and tear or taked more time
