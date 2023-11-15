@@ -5,16 +5,19 @@ export async function addOrder(req, res) {
     let {product_id}=req.body
     let order_no = Math.random().toString().slice(2, 2 + 4)
     try {
-        const result_1 = await queryListen("SELECT `id`, `user_id`, `category_id`, `product_name`, `tag`, `detail`, `description`, `price`, `latitude`, `longitude`, `is_active`, `is_deleted`, `created_on`, `updated_on`,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id) AS product_images,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id AND image_position = 'cover') AS cover_image FROM ad_product WHERE is_active = 1 AND is_deleted=0 AND product_id="+product_id+"");
+        
+        const result_1 = await queryListen("`id`, `user_id`, `category_id`, `product_name`, `tag`, `detail`, `description`, `price`, `latitude`, `longitude`, `is_active`, `is_deleted`, `created_on`, `updated_on`,`sold_out`, `pickup_location`, `drop_off_location`, `price_per_hour`, `price_per_day`, `necessary_documents_for_booking`, `currently_avalilabel`, `when_available`,`Fee_after_expiry_of_time_period`, `conditions_and_rules`, `available_on_rent`, `extra_charges_for_wear_and_tear`(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id) AS product_images,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id AND image_position = 'cover') AS cover_image FROM ad_product WHERE is_active = 1 AND is_deleted=0 AND product_id="+product_id+"");
         
         if (result_1.length) {
-            let {id,user_id,category_id,product_name,tag,detail,description,price,latitude,longitude,is_active,is_deleted,created_on,updated_on,cover_image,product_images} = result_1[0]
+            let {id, user_id, category_id, product_name, tag, detail, description, price, latitude, longitude, is_active, is_deleted, created_on, updated_on, sold_out, pickup_location, drop_off_location, price_per_hour, price_per_day, necessary_documents_for_booking, currently_avalilabel, when_available, Fee_after_expiry_of_time_period, conditions_and_rules, available_on_rent, extra_charges_for_wear_and_tear,cover_image,product_images} = result_1[0]
             const result = await queryListen("INSERT INTO `orders_data`(`order_id`, `seller_id`, `coustomer_id`, `product_id`, `order_status`, `order_delivery_status`) VALUES ('" + order_no + "','" + req.user_id + "','" + 0 + "','" + product_id + "')");
             if (result.insertId) {
                 
-                const order_product_result = await queryListen("INSERT INTO `order_product`(id,user_id,category_id,product_name,tag,detail,description,price,latitude,longitude,is_active,is_deleted,created_on,updated_on,cover_image,product_images) VALUES ("+id+","+user_id+","+category_id+","+product_name+","+tag+","+detail+","+description+","+price+","+latitude+","+longitude+","+is_active+","+is_deleted+","+created_on+","+updated_on+","+cover_image+","+product_images+"");
+                const order_product_result = await queryListen("INSERT INTO `order_product`(id,user_id,category_id,product_name,tag,detail,description,price,latitude,longitude,is_active,is_deleted,created_on,updated_on, sold_out, pickup_location, drop_off_location, price_per_hour, price_per_day, necessary_documents_for_booking, currently_avalilabel, when_available, Fee_after_expiry_of_time_period, conditions_and_rules, available_on_rent, extra_charges_for_wear_and_tear,cover_image,product_images) VALUES ("+id+","+req.user_id+","+category_id+","+product_name+","+tag+","+detail+","+description+","+price+","+latitude+","+longitude+","+is_active+","+is_deleted+","+created_on+","+updated_on+","+sold_out+", "+pickup_location+", "+drop_off_location+", "+price_per_hour+", "+price_per_day+", "+necessary_documents_for_booking+", "+currently_avalilabel+", "+when_available+", "+Fee_after_expiry_of_time_period+", "+conditions_and_rules+", "+available_on_rent+", "+extra_charges_for_wear_and_tear+","+cover_image+","+product_images+"");
                 console.log("order_product_result----"+JSON.stringify(order_product_result))
                 res.status(200).json({ "statusCode": 200, "status": true, "statusText": "order placed successfully" });
+
+                
             } else {
                 res.status(200).json({ "statusCode": 200, "status": true, "statusText": "order not inserted find error" });
             }

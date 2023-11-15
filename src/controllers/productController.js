@@ -4,13 +4,13 @@ import { queryListen, queryListen1 } from "../common/querylistener.js";
 
 
 export async function addproducts(req, res) {
-  let { user_id, category_id, product_name, tag, detail, description, price, latitude, longitude } = req.body;
+  let { user_id, category_id, product_name, tag, detail, description, price, latitude, longitude, pickup_location, drop_off_location, price_per_hour, price_per_day, necessary_documents_for_booking, currently_avalilabel, when_available, Fee_after_expiry_of_time_period, conditions_and_rules, available_on_rent, extra_charges_for_wear_and_tear} = req.body;
   let tags = Object.values(detail).join(',')
   tags += "," + tag
   console.log(tags)
   let detailStr = JSON.stringify(detail)
-  let query = `INSERT INTO \`ad_product\`(\`user_id\`, \`category_id\`, \`product_name\`, \`tag\`, \`detail\`, \`description\`, \`price\`, \`latitude\`, \`longitude\`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-  let values = [req.user_id, category_id, product_name, tags, detailStr, description, price, latitude, longitude];
+  let query = `INSERT INTO \`ad_product\`(\`user_id\`, \`category_id\`, \`product_name\`, \`tag\`, \`detail\`, \`description\`, \`price\`, \`latitude\`, \`longitude\`,\`pickup_location\`, \`drop_off_location\`, \`price_per_hour\`, \`price_per_day\`, \`necessary_documents_for_booking\`, \`currently_avalilabel\`, \`when_available\`, \`Fee_after_expiry_of_time_period\`, \`conditions_and_rules\`, \`available_on_rent\`, \`extra_charges_for_wear_and_tear\`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)`;
+  let values = [req.user_id, category_id, product_name, tags, detailStr, description, price, latitude, longitude,pickup_location, drop_off_location, price_per_hour, price_per_day, necessary_documents_for_booking, currently_avalilabel, when_available, Fee_after_expiry_of_time_period, conditions_and_rules, available_on_rent, extra_charges_for_wear_and_tear];
   // let query = `INSERT INTO \`ad_product\`(\`user_id\`, \`category_id\`, \`product_name\`, \`tag\`, \`detail\`, \`description\`, \`price\`, \`latitude\`, \`longitude\`) VALUES ("${user_id}","${category_id}","${product_name}","${tag}","${detailStr}","${description}","${price}","${latitude}","${longitude}")`;
   // return false
   try {
@@ -33,10 +33,10 @@ export async function getProducts(req, res) {
   let dataQuery ="";
   if(req.headers.user_token!=""&&req.headers.user_token!=undefined&&req.headers.user_token!=null){
     countQuery = "SELECT COUNT(*) AS total FROM ad_product WHERE is_active = 1 AND is_deleted=0 ";
-    dataQuery = "SELECT `id`, `user_id`, `category_id`, `product_name`, `tag`, `detail`, `description`, `price`, `latitude`, `longitude`, `is_active`, `is_deleted`, `created_on`, `updated_on`,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id) AS product_images,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id AND 	image_position = 'cover') AS cover_image, (SELECT user_id FROM wishlist WHERE user_id = "+req.user_id+" AND product_id = id) AS wishlist FROM ad_product WHERE is_active = 1 AND is_deleted=0";
+    dataQuery = "SELECT `id`, `user_id`, `category_id`, `product_name`, `tag`, `detail`, `description`, `price`, `latitude`, `longitude`, `is_active`, `is_deleted`, `created_on`, `updated_on`,`sold_out`, `pickup_location`, `drop_off_location`, `price_per_hour`, `price_per_day`, `necessary_documents_for_booking`, `currently_avalilabel`, `when_available`, `Fee_after_expiry_of_time_period`, `conditions_and_rules`, `available_on_rent`, `extra_charges_for_wear_and_tear`,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id) AS product_images,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id AND 	image_position = 'cover') AS cover_image, (SELECT user_id FROM wishlist WHERE user_id = "+req.user_id+" AND product_id = id) AS wishlist FROM ad_product WHERE is_active = 1 AND is_deleted=0";
   }else{
     countQuery = 'SELECT COUNT(*) AS total FROM ad_product WHERE is_active = 1 AND is_deleted=0 ';
-    dataQuery = "SELECT `id`, `user_id`, `category_id`, `product_name`, `tag`, `detail`, `description`, `price`, `latitude`, `longitude`, `is_active`, `is_deleted`, `created_on`, `updated_on`,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id) AS product_images,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id AND 	image_position = 'cover') AS cover_image FROM ad_product WHERE is_active = 1 AND is_deleted=0";
+    dataQuery = "SELECT `id`, `user_id`, `category_id`, `product_name`, `tag`, `detail`, `description`, `price`, `latitude`, `longitude`, `is_active`, `is_deleted`, `created_on`, `updated_on`,`sold_out`, `pickup_location`, `drop_off_location`, `price_per_hour`, `price_per_day`, `necessary_documents_for_booking`, `currently_avalilabel`, `when_available`, `Fee_after_expiry_of_time_period`, `conditions_and_rules`, `available_on_rent`, `extra_charges_for_wear_and_tear`,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id) AS product_images,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id AND 	image_position = 'cover') AS cover_image FROM ad_product WHERE is_active = 1 AND is_deleted=0";
   }
   // let countQuery = 'SELECT COUNT(*) AS total FROM ad_product WHERE is_active = 1 AND is_deleted=0 ';
   // let dataQuery = `SELECT * FROM ad_product WHERE is_active = 1 AND is_deleted=0 `;
