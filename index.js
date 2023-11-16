@@ -11,6 +11,7 @@ import porductRouter from "./src/routers/porductRouter.js";
 // import userRoutes from "./src/routers/userRoutes.js";
 import orderRoute from "./src/routers/ordersRouter.js"
 import messagesRouter from "./src/routers/messagesRoute.js";
+import categoryRoute from "./src/routers/categoryRoutes.js";
 import mongoose from "mongoose";
 import { Server } from "socket.io";
 
@@ -48,7 +49,7 @@ connection
 // });
 
 app.use(
-  test_route,adminRoutes,userRouter,porductRouter,messagesRouter,orderRoute
+  test_route,adminRoutes,userRouter,porductRouter,messagesRouter,orderRoute,categoryRoute
 );
 
 app.get("/version", (req, res) => {

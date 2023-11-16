@@ -33,7 +33,7 @@ export async function addOrder(req, res) {
 
 export async function getOrders(req, res) {
     console.log("getOrders------------------------");
-    let query = "SELECT id,user_id,category_id,product_name,tag,detail,description,price,latitude,longitude,is_active,is_deleted, order_product.created_on AS order_product_created_on, order_product.updated_on AS order_product_updated_on,cover_image,product_images, order_id,seller_id,coustomer_id,product_id,order_status,order_delivery_status , orders_data.created_on AS order_created_on ,orders_data.updated_on AS order_updated_on FROM  order_product , orders_data WHERE is_deleted = 0 AND is_active = 1 ";
+    let query = "SELECT id,user_id,category_id,product_name,tag,detail,description,price,latitude,longitude,is_active,is_deleted, order_product.created_on AS order_product_created_on, order_product.updated_on AS order_product_updated_on, `sold_out`, `pickup_location`, `drop_off_location`, `price_per_hour`, `price_per_day`, `necessary_documents_for_booking`, `currently_avalilabel`, `when_available`, `Fee_after_expiry_of_time_period`, `conditions_and_rules`, `available_on_rent`, `extra_charges_for_wear_and_tear`,cover_image,product_images, order_id,seller_id,coustomer_id,product_id,order_status,order_delivery_status , orders_data.created_on AS order_created_on ,orders_data.updated_on AS order_updated_on, booked_from, booked_to, booking_start_time, booking_end_time, total_amount, gst, sgst, cgst, extra_time_taken_after_the_deadline, extra_charges_for_wear_and_tear_or_taked_more_time, order_type FROM  order_product , orders_data WHERE is_deleted = 0 AND is_active = 1 ";
     try {
     const req_body = req.body;
     const keyArray = Object.keys(req_body) 

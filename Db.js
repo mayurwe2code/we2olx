@@ -2,10 +2,10 @@ import mysql from "mysql2";
 import "dotenv/config";
 
 var connection = mysql.createConnection({
-  host: 'biioxpwp0gu7yvdpjfbk-mysql.services.clever-cloud.com',
-  user: 'ukmpsgfr5hly9zip',
-  password: "15p6TrhMvJdsPCusj9BT",
-  database: "biioxpwp0gu7yvdpjfbk",
+  host: 'mysql.indiakinursery.com',
+  user: 'indiakinursery',
+  password: "WE2code@2023",
+  database: "olx_",
   waitForConnections: true,
   connectionLimit: 10,
   maxIdle: 10,
