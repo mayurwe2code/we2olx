@@ -2,8 +2,8 @@ import mysql from "mysql2";
 import "dotenv/config";
 
 var connection = mysql.createConnection({
-  host: 'mysql.indiakinursery.com',
-  user: 'indiakinursery',
+  host: "mysql.indiakinursery.com",
+  user: "indiakinursery",
   password: "WE2code@2023",
   database: "olx_",
   waitForConnections: true,

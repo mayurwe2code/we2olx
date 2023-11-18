@@ -33,10 +33,10 @@ export async function getProducts(req, res) {
   let dataQuery ="";
   if(req.headers.user_token!=""&&req.headers.user_token!=undefined&&req.headers.user_token!=null){
     countQuery = "SELECT COUNT(*) AS total FROM ad_product WHERE is_active = 1 AND is_deleted=0 ";
-    dataQuery = "SELECT `id`, `user_id`, `category_id`, `product_name`, `tag`, `detail`, `description`, `price`, `latitude`, `longitude`, `is_active`, `is_deleted`, `created_on`, `updated_on`,`sold_out`, `pickup_location`, `drop_off_location`, `price_per_hour`, `price_per_day`, `necessary_documents_for_booking`, `currently_avalilabel`, `when_available`, `Fee_after_expiry_of_time_period`, `conditions_and_rules`, `available_on_rent`, `extra_charges_for_wear_and_tear`,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id) AS product_images,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id AND 	image_position = 'cover') AS cover_image, (SELECT user_id FROM wishlist WHERE user_id = "+req.user_id+" AND product_id = id) AS wishlist FROM ad_product WHERE is_active = 1 AND is_deleted=0";
+    dataQuery = "SELECT `id`, `user_id`, `category_id`, `product_name`, `tag`, `detail`, `description`, `price`, `latitude`, `longitude`, `is_active`, `is_deleted`, `created_on`, `updated_on`,`sold_out`, `pickup_location`, `drop_off_location`, `price_per_hour`, `price_per_day`, `necessary_documents_for_booking`, `currently_avalilabel`, `when_available`, `Fee_after_expiry_of_time_period`, `conditions_and_rules`, `available_on_rent`, `extra_charges_for_wear_and_tear`,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id) AS product_images,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id AND 	image_position = 'cover') AS cover_image, (SELECT user_id FROM wishlist WHERE user_id = "+req.user_id+" AND product_id = id) AS wishlist FROM ad_product WHERE is_active = 1 AND is_deleted=0 ";
   }else{
     countQuery = 'SELECT COUNT(*) AS total FROM ad_product WHERE is_active = 1 AND is_deleted=0 ';
-    dataQuery = "SELECT `id`, `user_id`, `category_id`, `product_name`, `tag`, `detail`, `description`, `price`, `latitude`, `longitude`, `is_active`, `is_deleted`, `created_on`, `updated_on`,`sold_out`, `pickup_location`, `drop_off_location`, `price_per_hour`, `price_per_day`, `necessary_documents_for_booking`, `currently_avalilabel`, `when_available`, `Fee_after_expiry_of_time_period`, `conditions_and_rules`, `available_on_rent`, `extra_charges_for_wear_and_tear`,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id) AS product_images,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id AND 	image_position = 'cover') AS cover_image FROM ad_product WHERE is_active = 1 AND is_deleted=0";
+    dataQuery = "SELECT `id`, `user_id`, `category_id`, `product_name`, `tag`, `detail`, `description`, `price`, `latitude`, `longitude`, `is_active`, `is_deleted`, `created_on`, `updated_on`,`sold_out`, `pickup_location`, `drop_off_location`, `price_per_hour`, `price_per_day`, `necessary_documents_for_booking`, `currently_avalilabel`, `when_available`, `Fee_after_expiry_of_time_period`, `conditions_and_rules`, `available_on_rent`, `extra_charges_for_wear_and_tear`,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id) AS product_images,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id AND 	image_position = 'cover') AS cover_image FROM ad_product WHERE is_active = 1 AND is_deleted=0 ";
   }
   // let countQuery = 'SELECT COUNT(*) AS total FROM ad_product WHERE is_active = 1 AND is_deleted=0 ';
   // let dataQuery = `SELECT * FROM ad_product WHERE is_active = 1 AND is_deleted=0 `;
@@ -47,11 +47,31 @@ export async function getProducts(req, res) {
         let r_b_value = req.body[k];
         if ((!["is_deleted", "is_active", "price_from", "price_to"].includes(k)) && (r_b_value || r_b_value == '0')) {
           if (k == "search") {
-            countQuery += `AND (product_name LIKE '%${r_b_value}%'||tag LIKE '%${r_b_value}%') `
-            dataQuery += `AND (product_name LIKE '%${r_b_value}%'||tag LIKE '%${r_b_value}%') `
+            countQuery += ` AND (product_name LIKE '%${r_b_value}%'||tag LIKE '%${r_b_value}%') `
+            dataQuery += ` AND (product_name LIKE '%${r_b_value}%'||tag LIKE '%${r_b_value}%') `
           } else {
-            countQuery += `AND ${k} = ${r_b_value} `
-            dataQuery += `AND ${k} = ${r_b_value} `
+            if(typeof r_b_value == 'string'){
+              countQuery += ` AND ${k} = ${r_b_value} `
+              dataQuery += ` AND ${k} = ${r_b_value} `
+            }else{
+              r_b_value.forEach((item,index)=>{
+if(index==0){
+  countQuery += ` AND ( `
+dataQuery +=` AND ( `
+}  
+                if(index == r_b_value.length-1){
+                  countQuery += ` ${k} LIKE '%${item}%') `
+                  dataQuery += `  ${k} LIKE '%${item}%') `
+                }else{
+                  countQuery += ` ${k} LIKE '%${item}%' || `
+                  dataQuery += `  ${k} LIKE '%${item}%' || `
+                }
+              })
+      
+              // countQuery += ` AND ${k} IN (${"'"+r_b_value.join("','")+"'"}) `
+              // dataQuery +=  `AND ${k} IN (${"'"+r_b_value.join("','")+"'"}) `
+            }
+            
           }
         }
         if (index == reqBody.length - 1){

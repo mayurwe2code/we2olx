@@ -68,8 +68,8 @@ mongoose.connect("mongodb+srv://mayurwe2code:kN58MwBDS3wxQ06H@cluster0.p5jwu9n.m
         console.log("DB Connection Successful!")
     }).catch((err) => console.log(err));
 
-const server = app.listen(9999, () => {
-    console.log(`server is running at ${process.env.SERVERPORT}`);
+const server = app.listen(7777, () => {
+    console.log(`server is running at ${7777}`);
   });
 
   const io = new Server(server,{
