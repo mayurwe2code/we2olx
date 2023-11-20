@@ -1,16 +1,19 @@
 rent
 
 coloum for product_table:-
-                            pickup location
-                            drop off location
-                            price per hour
-                            price per day
-                            nesseccery document
-                            currently avalilabel
-                            when available
-                            Fee after expiry of time period
+                            pickup location;
+                            drop off location;
+                            price per hour;
+                            price per day;
+                            necessary_documents_for_booking;
+                            currently avalilabel;
+                            when available;
+                            Fee after expiry of time period;
+                            conditions_and_rules
+
 
 order table :-
+
              // order_type : buy_or_rent
               booking timing:
               booked from:
