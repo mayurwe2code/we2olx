@@ -6,6 +6,7 @@ import {
   sendNotification,
   setNotification,
 } from "../common/push_notification.js";
+
 export async function add_user(req, res) {
   var {
     first_name,

@@ -1,7 +1,10 @@
 // import products from "razorpay/dist/types/products.js";
 import { imageSave } from "../common/fileSaver.js";
 import { queryListen, queryListen1 } from "../common/querylistener.js";
-
+import {
+  sendNotification,
+  setNotification,
+} from "../common/push_notification.js";
 
 export async function addproducts(req, res) {
   let { user_id, category_id, product_name, tag, detail, description, price, latitude, longitude, pickup_location, drop_off_location, price_per_hour, price_per_day, necessary_documents_for_booking, currently_avalilabel, when_available, Fee_after_expiry_of_time_period, conditions_and_rules, available_on_rent, extra_charges_for_wear_and_tear} = req.body;
