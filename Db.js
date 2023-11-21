@@ -1,35 +1,11 @@
 import mysql from "mysql2";
 import "dotenv/config";
-import ReconnectCore from 'reconnect-core';
-// node
-// console.log();
-// const connection = mysql.createConnection({
-//   host: "localhost",
-//   user: "we2code",
-//   password: "we2code",
-//   database: "nursery",
-// });
 
-// connection.connect((error) => {
-//   if (error) throw error;
-//   console.log("Successfully connected to the database.");
-// });
-// export default connection;
-
-// export default function handleDisconnect() {
-
-
-// var connection = mysql.createConnection({
-//   host: "mysql.indiakinursery.com",
-//   user: "indiakinursery",
-//   password: "WE2code@2023",
-//   database: "indiakinursery",
-// });
 var connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'we2code',
-  password: "we2code",
-  database: "we2olx",
+  host: "mysql.indiakinursery.com",
+  user: "indiakinursery",
+  password: "WE2code@2023",
+  database: "olx_",
   waitForConnections: true,
   connectionLimit: 10,
   maxIdle: 10,

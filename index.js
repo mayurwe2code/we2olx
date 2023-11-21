@@ -11,6 +11,8 @@ import porductRouter from "./src/routers/porductRouter.js";
 // import userRoutes from "./src/routers/userRoutes.js";
 import orderRoute from "./src/routers/ordersRouter.js"
 import messagesRouter from "./src/routers/messagesRoute.js";
+import categoryRoute from "./src/routers/categoryRoutes.js";
+import locationRoute from "./src/routers/locationRoute.js";
 import mongoose from "mongoose";
 import { Server } from "socket.io";
 
@@ -48,7 +50,7 @@ connection
 // });
 
 app.use(
-  test_route,adminRoutes,userRouter,porductRouter,messagesRouter,orderRoute
+  test_route,adminRoutes,userRouter,porductRouter,messagesRouter,orderRoute,categoryRoute,locationRoute
 );
 
 app.get("/version", (req, res) => {
@@ -67,8 +69,8 @@ mongoose.connect("mongodb+srv://mayurwe2code:kN58MwBDS3wxQ06H@cluster0.p5jwu9n.m
         console.log("DB Connection Successful!")
     }).catch((err) => console.log(err));
 
-const server = app.listen(9999, () => {
-    console.log(`server is running at ${process.env.SERVERPORT}`);
+const server = app.listen(7777, () => {
+    console.log(`server is running at ${7777}`);
   });
 
   const io = new Server(server,{

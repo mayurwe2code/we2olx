@@ -1,16 +1,19 @@
 // import products from "razorpay/dist/types/products.js";
 import { imageSave } from "../common/fileSaver.js";
 import { queryListen, queryListen1 } from "../common/querylistener.js";
-
+import {
+  sendNotification,
+  setNotification,
+} from "../common/push_notification.js";
 
 export async function addproducts(req, res) {
-  let { user_id, category_id, product_name, tag, detail, description, price, latitude, longitude } = req.body;
+  let { user_id, category_id, product_name, tag, detail, description, price, latitude, longitude, pickup_location, drop_off_location, price_per_hour, price_per_day, necessary_documents_for_booking, currently_avalilabel, when_available, Fee_after_expiry_of_time_period, conditions_and_rules, available_on_rent, extra_charges_for_wear_and_tear} = req.body;
   let tags = Object.values(detail).join(',')
   tags += "," + tag
   console.log(tags)
   let detailStr = JSON.stringify(detail)
-  let query = `INSERT INTO \`ad_product\`(\`user_id\`, \`category_id\`, \`product_name\`, \`tag\`, \`detail\`, \`description\`, \`price\`, \`latitude\`, \`longitude\`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-  let values = [req.user_id, category_id, product_name, tags, detailStr, description, price, latitude, longitude];
+  let query = `INSERT INTO \`ad_product\`(\`user_id\`, \`category_id\`, \`product_name\`, \`tag\`, \`detail\`, \`description\`, \`price\`, \`latitude\`, \`longitude\`,\`pickup_location\`, \`drop_off_location\`, \`price_per_hour\`, \`price_per_day\`, \`necessary_documents_for_booking\`, \`currently_avalilabel\`, \`when_available\`, \`Fee_after_expiry_of_time_period\`, \`conditions_and_rules\`, \`available_on_rent\`, \`extra_charges_for_wear_and_tear\`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)`;
+  let values = [req.user_id, category_id, product_name, tags, detailStr, description, price, latitude, longitude,pickup_location, drop_off_location, price_per_hour, price_per_day, necessary_documents_for_booking, currently_avalilabel, when_available, Fee_after_expiry_of_time_period, conditions_and_rules, available_on_rent, extra_charges_for_wear_and_tear];
   // let query = `INSERT INTO \`ad_product\`(\`user_id\`, \`category_id\`, \`product_name\`, \`tag\`, \`detail\`, \`description\`, \`price\`, \`latitude\`, \`longitude\`) VALUES ("${user_id}","${category_id}","${product_name}","${tag}","${detailStr}","${description}","${price}","${latitude}","${longitude}")`;
   // return false
   try {
@@ -27,16 +30,24 @@ export async function getProducts(req, res) {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const reqBody = Object.keys(req.body);
-  let { price_from, price_to } = req.body
+  let { price_from, price_to,user_long,user_lat,distance } = req.body
   const offset = (page - 1) * limit;
   let countQuery ="";
   let dataQuery ="";
+  let near_me =""
+  let nearRadius=""
+    if(user_lat && user_long){
+      near_me = ` , 6371 * 2 * ASIN(SQRT(POWER(SIN(RADIANS(latitude - ${user_lat}) / 2), 2) +COS(RADIANS(${user_lat})) * COS(RADIANS(latitude)) * POWER(SIN(RADIANS(longitude - ${user_long}) / 2), 2))) AS distance `
+      nearRadius = ` AND 6371 * 2 * ASIN(SQRT(POWER(SIN(RADIANS(latitude - ${user_lat}) / 2), 2) +COS(RADIANS(${user_lat})) * COS(RADIANS(latitude)) * POWER(SIN(RADIANS(longitude - ${user_long}) / 2), 2)))  <= ${distance||5} `
+    }
   if(req.headers.user_token!=""&&req.headers.user_token!=undefined&&req.headers.user_token!=null){
-    countQuery = "SELECT COUNT(*) AS total FROM ad_product WHERE is_active = 1 AND is_deleted=0 ";
-    dataQuery = "SELECT `id`, `user_id`, `category_id`, `product_name`, `tag`, `detail`, `description`, `price`, `latitude`, `longitude`, `is_active`, `is_deleted`, `created_on`, `updated_on`,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id) AS product_images,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id AND 	image_position = 'cover') AS cover_image, (SELECT user_id FROM wishlist WHERE user_id = "+req.user_id+" AND product_id = id) AS wishlist FROM ad_product WHERE is_active = 1 AND is_deleted=0";
+
+
+    countQuery = "SELECT COUNT(*) AS total ,latitude,longitude "+near_me+" FROM ad_product WHERE is_active = 1 AND is_deleted=0 ";
+    dataQuery = "SELECT `id`, `user_id`, `category_id`, `product_name`, `tag`, `detail`, `description`, `price`, `latitude`, `longitude`, `is_active`, `is_deleted`, `created_on`, `updated_on`,`sold_out`, `pickup_location`, `drop_off_location`, `price_per_hour`, `price_per_day`, `necessary_documents_for_booking`, `currently_avalilabel`, `when_available`, `Fee_after_expiry_of_time_period`, `conditions_and_rules`, `available_on_rent`, `extra_charges_for_wear_and_tear`,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id) AS product_images,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id AND 	image_position = 'cover') AS cover_image, (SELECT user_id FROM wishlist WHERE user_id = "+req.user_id+" AND product_id = id) AS wishlist "+near_me+" FROM ad_product WHERE is_active = 1 AND is_deleted=0 ";
   }else{
-    countQuery = 'SELECT COUNT(*) AS total FROM ad_product WHERE is_active = 1 AND is_deleted=0 ';
-    dataQuery = "SELECT `id`, `user_id`, `category_id`, `product_name`, `tag`, `detail`, `description`, `price`, `latitude`, `longitude`, `is_active`, `is_deleted`, `created_on`, `updated_on`,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id) AS product_images,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id AND 	image_position = 'cover') AS cover_image FROM ad_product WHERE is_active = 1 AND is_deleted=0";
+    countQuery = 'SELECT COUNT(*) AS total,latitude,longitude '+near_me+' FROM ad_product WHERE is_active = 1 AND is_deleted=0 ';
+    dataQuery = "SELECT `id`, `user_id`, `category_id`, `product_name`, `tag`, `detail`, `description`, `price`, `latitude`, `longitude`, `is_active`, `is_deleted`, `created_on`, `updated_on`,`sold_out`, `pickup_location`, `drop_off_location`, `price_per_hour`, `price_per_day`, `necessary_documents_for_booking`, `currently_avalilabel`, `when_available`, `Fee_after_expiry_of_time_period`, `conditions_and_rules`, `available_on_rent`, `extra_charges_for_wear_and_tear`,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id) AS product_images,(SELECT GROUP_CONCAT(image_path) AS product_images FROM `product_image` WHERE product_id=id AND 	image_position = 'cover') AS cover_image "+near_me+" FROM ad_product WHERE is_active = 1 AND is_deleted=0 ";
   }
   // let countQuery = 'SELECT COUNT(*) AS total FROM ad_product WHERE is_active = 1 AND is_deleted=0 ';
   // let dataQuery = `SELECT * FROM ad_product WHERE is_active = 1 AND is_deleted=0 `;
@@ -45,13 +56,33 @@ export async function getProducts(req, res) {
     return new Promise((resolve, reject) => {
       reqBody.forEach((k, index) => {
         let r_b_value = req.body[k];
-        if ((!["is_deleted", "is_active", "price_from", "price_to"].includes(k)) && (r_b_value || r_b_value == '0')) {
+        if ((!["is_deleted", "is_active", "price_from", "price_to","user_long","user_lat","distance"].includes(k)) && (r_b_value || r_b_value == '0')) {
           if (k == "search") {
-            countQuery += `AND (product_name LIKE '%${r_b_value}%'||tag LIKE '%${r_b_value}%') `
-            dataQuery += `AND (product_name LIKE '%${r_b_value}%'||tag LIKE '%${r_b_value}%') `
+            countQuery += ` AND (product_name LIKE '%${r_b_value}%'||tag LIKE '%${r_b_value}%') `
+            dataQuery += ` AND (product_name LIKE '%${r_b_value}%'||tag LIKE '%${r_b_value}%') `
           } else {
-            countQuery += `AND ${k} = ${r_b_value} `
-            dataQuery += `AND ${k} = ${r_b_value} `
+            if(typeof r_b_value == 'string'){
+              countQuery += ` AND ${k} = ${r_b_value} `
+              dataQuery += ` AND ${k} = ${r_b_value} `
+            }else{
+              r_b_value.forEach((item,index)=>{
+if(index==0){
+  countQuery += ` AND ( `
+dataQuery +=` AND ( `
+}  
+                if(index == r_b_value.length-1){
+                  countQuery += ` ${k} LIKE '%${item}%') `
+                  dataQuery += `  ${k} LIKE '%${item}%') `
+                }else{
+                  countQuery += ` ${k} LIKE '%${item}%' || `
+                  dataQuery += `  ${k} LIKE '%${item}%' || `
+                }
+              })
+      
+              // countQuery += ` AND ${k} IN (${"'"+r_b_value.join("','")+"'"}) `
+              // dataQuery +=  `AND ${k} IN (${"'"+r_b_value.join("','")+"'"}) `
+            }
+            
           }
         }
         if (index == reqBody.length - 1){
@@ -67,6 +98,9 @@ export async function getProducts(req, res) {
           } else {
 
           }
+          countQuery += ` ${nearRadius} `
+          dataQuery += ` ${nearRadius} `
+           
           resolve([`${dataQuery} LIMIT ${limit} OFFSET ${offset} `, `${countQuery} LIMIT ${limit} OFFSET ${offset} `]);
         };
       });
@@ -74,11 +108,12 @@ export async function getProducts(req, res) {
   };
   try {
     dataQuery = await queryMaker(reqBody)
-    let countResults = await queryListen(dataQuery[1]);
+console.log(dataQuery[0].replace("timage_position","image_position"));
+console.log(dataQuery[1].replace("timage_position","image_position"));
+    let countResults = await queryListen(dataQuery[1].replace("timage_position","image_position"));
     const totalRecords = countResults[0].total;
     const totalPages = Math.ceil(totalRecords / limit);
-    let dataResults = await queryListen(dataQuery[0]);
-
+    let dataResults = await queryListen(dataQuery[0].replace("timage_position","image_position"));
     const responseData = {
       statusText: "ok",
       statusCode: 200,

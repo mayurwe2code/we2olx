@@ -6,6 +6,7 @@ import {
   sendNotification,
   setNotification,
 } from "../common/push_notification.js";
+
 export async function add_user(req, res) {
   var {
     first_name,
@@ -308,7 +309,7 @@ export function user_signup(req, res) {
                       } else {
                         if (rows != "") {
                           const mail_configs = {
-                            from: "rahul.verma.we2code@gmail.com",
+                            from: "mayur.we2code@gmail.com",
                             to: u_email,
                             subject: "Nursery_live one time password",
                             text: "use otp within 60 sec.",
@@ -319,8 +320,8 @@ export function user_signup(req, res) {
                             .createTransport({
                               service: "gmail",
                               auth: {
-                                user: "rahul.verma.we2code@gmail.com",
-                                pass: "sfbmekwihdamgxia",
+                                user: "mayur.we2code@gmail.com",
+                                pass: "tozuskyqbgojopbs",
                               },
                             })
                             .sendMail(mail_configs, (err) => {
@@ -777,7 +778,7 @@ export function user_forgate_password(req, res) {
                     } else {
                       if (rows != "") {
                         const mail_configs = {
-                          from: "rahul.verma.we2code@gmail.com",
+                          from: "mayur.we2code@gmail.com",
                           to: req.body.email,
                           subject: "Nursery_live one time password",
                           text: "use otp within 60 sec.",
@@ -787,8 +788,8 @@ export function user_forgate_password(req, res) {
                           .createTransport({
                             service: "gmail",
                             auth: {
-                              user: "rahul.verma.we2code@gmail.com",
-                              pass: "sfbmekwihdamgxia",
+                              user: "mayur.we2code@gmail.com",
+                              pass: "tozuskyqbgojopbs",
                             },
                           })
                           .sendMail(mail_configs, (err) => {
@@ -849,7 +850,7 @@ export function user_forgate_password(req, res) {
 }
 
 // export function admin_login(req, res) {
-//   let admin_email_ar = ["mayur.we2code@gmail.com", "ashish.we2code@gmail.com", "chetan.barod.we2code@gmail.com", "raj.we2code@gmail.com", "rahul.verma.we2code@gmail.com"]
+//   let admin_email_ar = ["mayur.we2code@gmail.com", "ashish.we2code@gmail.com", "chetan.barod.we2code@gmail.com", "raj.we2code@gmail.com", "mayur.we2code@gmail.com"]
 //   let admin_psw = "we2code1234"
 //   let { email, password } = req.body
 //   if (email !== "" && password !== "") {
